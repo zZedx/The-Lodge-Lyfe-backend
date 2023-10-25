@@ -6,11 +6,14 @@ const cors = require("cors");
 const multer = require("multer");
 const { storage } = require("./cloudinary");
 const upload = multer({storage});
+const {cloudinary} = require('./cloudinary')
 
 const Booking = require("./models/bookings");
 const Cabin = require("./models/cabins");
 const Guest = require("./models/guests");
 const Setting = require("./models/settings");
+
+const catchAsyncError = require('./middleWares/catchAsyncError')
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/WildOasis")
@@ -28,25 +31,41 @@ app.use(express.json());
 app.use(cors());
 // app.use(express.urlencoded({ extended: false }));
 
-app.get("/cabins", async (req, res) => {
+app.get("/cabins", catchAsyncError(async (req, res) => {
   const allCabins = await Cabin.find();
   res.json(allCabins);
-});
+}));
 
-app.post("/createCabin", upload.single("image"), async (req, res) => {
+app.post("/createCabin", upload.single("image"), catchAsyncError(async (req, res) => {
   const { name, maxCapacity, discount, description, regularPrice } = req.body;
   const  image  = req.file.path;
+  const imageName = req.file.filename
   const newCabin = new Cabin({
     name,
     maxCapacity,
     description,
     discount,
     regularPrice,
-    image
+    image,
+    imageName
   });
   newCabin.save()
   res.json();
-});
+}));
+
+app.delete('/deleteCabin' , catchAsyncError(async(req,res)=>{
+    const {id} = req.body
+    const cabin = await Cabin.findById(id)
+    await cloudinary.uploader.destroy(cabin.imageName)
+    await Cabin.findByIdAndDelete(id)
+    res.json()
+}))
+
+app.use((err, req, res, next) => {
+    const { status = 500 } = err
+    if (!err.message) err.message = "Oh No, Something Went Wrong!"
+    res.status(status).json({err})
+})
 
 app.listen(3000, () => {
   console.log("Listening");

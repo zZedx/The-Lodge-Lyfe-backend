@@ -19,6 +19,9 @@ const cabinSchema = new Schema({
     },
     image:{
         type:String,
+    },
+    imageName : {
+        type : String
     }
 })
 
