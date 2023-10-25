@@ -1,34 +1,56 @@
-const express = require('express')
-const app =express()
-const mongoose = require('mongoose')
-const cors = require('cors');
+require('dotenv').config();
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const cors = require("cors");
+const multer = require("multer");
+const { storage } = require("./cloudinary");
+const upload = multer({storage});
 
-const Booking = require('./models/bookings')
-const Cabin = require('./models/cabins')
-const Guest = require('./models/guests')
-const Setting = require('./models/settings')
+const Booking = require("./models/bookings");
+const Cabin = require("./models/cabins");
+const Guest = require("./models/guests");
+const Setting = require("./models/settings");
 
-mongoose.connect('mongodb://127.0.0.1:27017/WildOasis')
-.then(()=>{
-    console.log('Mongoose Running')
-})
-.catch((e)=>{
+mongoose
+  .connect("mongodb://127.0.0.1:27017/WildOasis")
+  .then(() => {
+    console.log("Mongoose Running");
+  })
+  .catch((e) => {
     console.log(e);
-})
+  });
 
-const path = require('path')
-app.set('views' , path.join(__dirname , 'views'))
-app.use(express.static('public'));
+const path = require("path");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
+// app.use(express.urlencoded({ extended: false }));
 
-app.get('/cabins',async(req,res)=>{
-    const allCabins = await Cabin.find()
-    res.json(allCabins)
-})
-app.listen(3000,()=>{
-    console.log('Listening')
-})
+app.get("/cabins", async (req, res) => {
+  const allCabins = await Cabin.find();
+  res.json(allCabins);
+});
+
+app.post("/createCabin", upload.single("image"), async (req, res) => {
+  const { name, maxCapacity, discount, description, regularPrice } = req.body;
+  const  image  = req.file.path;
+  const newCabin = new Cabin({
+    name,
+    maxCapacity,
+    description,
+    discount,
+    regularPrice,
+    image
+  });
+  newCabin.save()
+  res.json();
+});
+
+app.listen(3000, () => {
+  console.log("Listening");
+});
 
 // const guest = new Guest({
 //     fullName : 'John Doe',
