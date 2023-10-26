@@ -72,6 +72,17 @@ app.put('/editCabin',upload.single("image"), catchAsyncError(async(req,res)=>{
   res.json()
 }))
 
+app.get('/settings' , catchAsyncError(async(req,res)=>{
+  const settings = await Setting.findOne()
+  res.json(settings)
+}))
+
+app.patch('/updateSettings' , catchAsyncError(async(req,res)=>{
+  const {setting} = req.body
+  await Setting.updateOne(setting)
+  res.json()
+}))
+
 app.use((err, req, res, next) => {
     const { status = 500 } = err
     if (!err.message) err.message = "Oh No, Something Went Wrong!"
