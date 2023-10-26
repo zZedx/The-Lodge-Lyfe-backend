@@ -38,8 +38,8 @@ app.get("/cabins", catchAsyncError(async (req, res) => {
 
 app.post("/createCabin", upload.single("image"), catchAsyncError(async (req, res) => {
   const { name, maxCapacity, discount, description, regularPrice } = req.body;
-  const  image  = req.file.path;
-  const imageName = req.file.filename
+  const  image  = req.file ? req.file.path : req.body.image;
+  const imageName = req.file ? req.file.filename : req.body.imageName
   const newCabin = new Cabin({
     name,
     maxCapacity,
