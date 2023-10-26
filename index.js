@@ -61,10 +61,14 @@ app.delete('/deleteCabin' , catchAsyncError(async(req,res)=>{
     res.json()
 }))
 
-app.put('/editCabin', catchAsyncError(async(req,res)=>{
+app.put('/editCabin',upload.single("image"), catchAsyncError(async(req,res)=>{
   const {_id} = req.body
-  const cabin = await Cabin.findByIdAndUpdate( _id , req.body)
-  console.log(cabin)
+  if(req.file){
+    await Cabin.findOneAndUpdate( {_id} , {...req.body , image : req.file.path , imageName : req.file.filename})
+    await cloudinary.uploader.destroy(req.body.imageName)
+  }else{
+    await Cabin.findByIdAndUpdate( _id , req.body)
+  }
   res.json()
 }))
 
