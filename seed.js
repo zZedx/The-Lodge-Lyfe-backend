@@ -67,3 +67,35 @@ const seedDB = async () => {
 seedDB().then(() => {
   mongoose.connection.close();
 });
+
+
+// const guest = new Guest({
+//     fullName : 'John Doe',
+//     email : 'text@gmail.com',
+// })
+// guest.save()
+// const cabin = new Cabin({
+//     name : '001',
+//     maxCapacity : 2,
+//     discount : 50,
+//     description : 'This is a cabin',
+//     regularPrice : 250,
+//     image : 'https://i.imgur.com/2nCt3Sbl.jpg',
+// })
+// cabin.save()
+// const booking = new Booking({
+//     startDate : new Date(),
+//     endDate : new Date(),
+//     numberNights : 3,
+//     numberGuests : 2,
+//     cabinPrice : 250,
+//     extrasPrice : 0,
+//     totalPrice : 250,
+//     status : 'pending',
+//     hasBreakfast : false,
+//     isPaid : false,
+//     observations : 'This is a booking'
+// })
+// booking.guest = guest
+// booking.cabin = cabin
+// booking.save()
