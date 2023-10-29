@@ -56,7 +56,10 @@ app.post("/createCabin", upload.single("image"), catchAsyncError(async (req, res
 app.delete('/deleteCabin' , catchAsyncError(async(req,res)=>{
     const {id} = req.body
     const cabin = await Cabin.findById(id)
-    await cloudinary.uploader.destroy(cabin.imageName)
+    const copyCabins = await Cabin.find({imageName : cabin.imageName})
+    if(copyCabins.length <= 1){
+      await cloudinary.uploader.destroy(cabin.imageName)
+    }
     await Cabin.findByIdAndDelete(id)
     res.json()
 }))
