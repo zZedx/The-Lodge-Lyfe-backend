@@ -16,25 +16,27 @@ mongoose
 
 const seedDB = async () => {
   await Guest.deleteMany({});
-  await Cabin.deleteMany({});
+  // await Cabin.deleteMany({});
   await Booking.deleteMany({});
-  await Setting.deleteMany({});
+  // await Setting.deleteMany({});
   const guest = new Guest({
     fullName: "John Doe",
     email: "text@gmail.com",
   });
   await guest.save();
 
-  const cabin = new Cabin({
-    name: "001",
-    maxCapacity: 2,
-    discount: 50,
-    description: "This is a cabin",
-    regularPrice: 250,
-    image:
-      "https://nqecmmwdoyvwwbyqcmyc.supabase.co/storage/v1/object/public/cabin-images/cabin-001.jpg",
-  });
-  await cabin.save();
+  // const cabin = new Cabin({
+  //   name: "001",
+  //   maxCapacity: 2,
+  //   discount: 50,
+  //   description: "This is a cabin",
+  //   regularPrice: 250,
+  //   image:
+  //     "https://nqecmmwdoyvwwbyqcmyc.supabase.co/storage/v1/object/public/cabin-images/cabin-001.jpg",
+  // });
+  // await cabin.save();
+
+  const cabin = await Cabin.findOne({name : "001"})
 
   const booking = new Booking({
     startDate: new Date(),
@@ -53,13 +55,13 @@ const seedDB = async () => {
   booking.cabin = cabin;
   await booking.save();
 
-  const setting = new Setting({
-    minBookingLength: 3,
-    maxBookingLength: 90,
-    maxGuestsPerBooking: 8,
-    breakfastPrice: 15,
-  });
-  await setting.save();
+  // const setting = new Setting({
+  //   minBookingLength: 3,
+  //   maxBookingLength: 90,
+  //   maxGuestsPerBooking: 8,
+  //   breakfastPrice: 15,
+  // });
+  // await setting.save();
 };
 
 seedDB().then(() => {
