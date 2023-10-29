@@ -22,6 +22,9 @@ const seedDB = async () => {
   const guest = new Guest({
     fullName: "John Doe",
     email: "text@gmail.com",
+    nationalId : '34',
+    nationality : "india",
+    countryFlag : 'in'
   });
   await guest.save();
 
@@ -46,7 +49,7 @@ const seedDB = async () => {
     cabinPrice: 250,
     extrasPrice: 0,
     totalPrice: 250,
-    status: "pending",
+    status: "unconfirmed",
     hasBreakfast: false,
     isPaid: false,
     observations: "This is a booking",

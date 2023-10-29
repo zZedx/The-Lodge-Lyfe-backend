@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const cabinRoutes = require("./routes/cabins")
 const settingsRoutes = require("./routes/settings")
+const bookingsRoutes = require("./routes/bookings")
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/WildOasis")
@@ -21,6 +22,7 @@ app.use(cors());
 
 app.use("/cabins" , cabinRoutes)
 app.use('/settings' , settingsRoutes)
+app.use('/bookings' , bookingsRoutes)
 
 app.use((err, req, res, next) => {
     const { status = 500 } = err
