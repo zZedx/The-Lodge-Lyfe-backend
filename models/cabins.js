@@ -27,9 +27,9 @@ const cabinSchema = new Schema({
     }
 })
 
-cabinSchema.post('findByIdAndDelete', async function(doc,next){
+cabinSchema.post('findOneAndDelete', async function(doc,next){
     try{
-        await Booking.deleteMany({cabinId:doc._id})
+        await Booking.deleteMany({cabin:doc._id})
         next()
     }catch(err){
         next(err)

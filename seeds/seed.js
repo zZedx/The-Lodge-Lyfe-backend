@@ -25,8 +25,12 @@ const subtractDates = (dateStr1, dateStr2) =>
 const seedDB = async () => {
   // await Guest.deleteMany({});
   // await Cabin.deleteMany({});
-  await Booking.deleteMany({});
   // await Setting.deleteMany({});
+  await Booking.deleteMany({});
+
+  // await Cabin.insertMany(cabins);
+  // await Guest.insertMany(guests);
+
   bookings.forEach(async (booking) => {
     const guest = (await Guest.aggregate([{ $sample: { size: 1 } }]))[0];
     const cabin = (await Cabin.aggregate([{ $sample: { size: 1 } }]))[0];
@@ -66,8 +70,6 @@ const seedDB = async () => {
     newBooking.numNights = numNights;
     await newBooking.save();
   });
-  // await Cabin.insertMany(cabins);
-  // await Guest.insertMany(guests);
 }
 
 seedDB()
