@@ -63,7 +63,7 @@ const seedDB = async () => {
     newBooking.totalPrice = totalPrice;
     newBooking.cabinPrice = cabinPrice;
     newBooking.extrasPrice = extrasPrice;
-    cabin.numNights = numNights;
+    newBooking.numNights = numNights;
     await newBooking.save();
   });
   // await Cabin.insertMany(cabins);

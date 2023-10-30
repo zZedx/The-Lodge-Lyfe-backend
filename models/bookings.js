@@ -8,10 +8,10 @@ const bookingSchema = new Schema({
     endDate : {
         type : Date,
     },
-    numberNights : {
+    numNights : {
         type : Number,
     },
-    numberGuests : {
+    numGuests : {
         type : Number,
     },
     cabinPrice : {
