@@ -8,7 +8,7 @@ const guestSchema = new Schema({
     email : {
         type : String,
     },
-    nationalId : {
+    nationalID : {
         type : String,
     },
     nationality : {
