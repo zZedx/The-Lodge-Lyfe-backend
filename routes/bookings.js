@@ -30,14 +30,17 @@ router.get('/', catchAsyncError(async (req, res) => {
 
 router.get('/:bookingId', catchAsyncError(async (req, res) => {
   const { bookingId } = req.params
-  const booking = await Booking.findById(bookingId).populate({
-    path: 'guest',
-    select: 'fullName email'
-  }).populate({
+  const booking = await Booking.findById(bookingId).populate("guest").populate({
     path: 'cabin',
     select: 'name'
   })
   res.json(booking)
+}))
+
+router.patch("/:bookingId", catchAsyncError(async (req, res) => {
+  const {bookingId} = req.params
+  await Booking.findByIdAndUpdate(bookingId, {status: "checked-in" , isPaid : true})
+  res.json()
 }))
 
 module.exports = router
