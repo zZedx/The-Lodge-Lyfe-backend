@@ -43,5 +43,10 @@ router.patch("/:bookingId", catchAsyncError(async (req, res) => {
   res.json()
 }))
 
+router.delete("/:bookingId", catchAsyncError(async (req, res) => {
+  const { bookingId } = req.params
+  await Booking.findByIdAndDelete(bookingId)
+  res.json()
+}))
 module.exports = router
 
