@@ -17,7 +17,7 @@ router.get('/', catchAsyncError(async (req, res) => {
     })
     res.json(allBookings)
   } else {
-    const filteredBookings = await Booking.find({status}).populate({
+    const filteredBookings = await Booking.find({ status }).populate({
       path: 'guest',
       select: 'fullName email'
     }).populate({
@@ -38,8 +38,8 @@ router.get('/:bookingId', catchAsyncError(async (req, res) => {
 }))
 
 router.patch("/:bookingId", catchAsyncError(async (req, res) => {
-  const {bookingId} = req.params
-  await Booking.findByIdAndUpdate(bookingId, {status: "checked-in" , isPaid : true})
+  const { bookingId } = req.params
+  await Booking.findByIdAndUpdate(bookingId, { status: "checked-in", isPaid: true, ...req.body })
   res.json()
 }))
 
