@@ -28,5 +28,17 @@ router.get('/', catchAsyncError(async (req, res) => {
   }
 }))
 
+router.get('/:bookingId', catchAsyncError(async (req, res) => {
+  const { bookingId } = req.params
+  const booking = await Booking.findById(bookingId).populate({
+    path: 'guest',
+    select: 'fullName email'
+  }).populate({
+    path: 'cabin',
+    select: 'name'
+  })
+  res.json(booking)
+}))
+
 module.exports = router
 

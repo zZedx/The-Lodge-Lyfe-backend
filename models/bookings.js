@@ -2,6 +2,10 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const bookingSchema = new Schema({
+    created_at : {
+        type : Date,
+        default : Date.now,
+    },
     startDate : {
         type : Date,
     },
