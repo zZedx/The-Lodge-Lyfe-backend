@@ -39,7 +39,7 @@ router.get('/:bookingId', catchAsyncError(async (req, res) => {
 
 router.patch("/:bookingId", catchAsyncError(async (req, res) => {
   const { bookingId } = req.params
-  await Booking.findByIdAndUpdate(bookingId, { status: "checked-in", isPaid: true, ...req.body })
+  await Booking.findByIdAndUpdate(bookingId, req.body)
   res.json()
 }))
 
