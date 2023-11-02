@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
+const cookieParser = require('cookie-parser')
 
 const cabinRoutes = require("./routes/cabins")
 const settingsRoutes = require("./routes/settings")
@@ -19,17 +20,21 @@ mongoose
   });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend's URL
+  credentials: true,
+}));
+app.use(cookieParser());
 
-app.use("/cabins" , cabinRoutes)
-app.use('/settings' , settingsRoutes)
-app.use('/bookings' , bookingsRoutes)
-app.use('/users' , usersRoutes)
+app.use("/cabins", cabinRoutes)
+app.use('/settings', settingsRoutes)
+app.use('/bookings', bookingsRoutes)
+app.use('/users', usersRoutes)
 
 app.use((err, req, res, next) => {
-    const { status = 500} = err
-    if (!err.message) err.message = "Oh No, Something Went Wrong!"
-    res.status(status).json({err , message : err.message})
+  const { status = 500 } = err
+  if (!err.message) err.message = "Oh No, Something Went Wrong!"
+  res.status(status).json({ err, message: err.message })
 })
 
 app.listen(3000, () => {

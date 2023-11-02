@@ -32,7 +32,7 @@ router.post('/login', catchAsyncError(async (req, res) => {
 }))
 
 router.get('/getUser', catchAsyncError(async (req, res) => {
-    const token = req.headers.authorization
+    const token = req.cookies.token
     if (!token) throw new Error("Unauthorized")
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
