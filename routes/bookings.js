@@ -4,6 +4,8 @@ const router = express.Router()
 const catchAsyncError = require('../middleWares/catchAsyncError')
 const Booking = require("../models/bookings")
 const Guest = require('../models/guests')
+const isAdmin = require('../middleWares/isAdmin')
+const isLoggedIn = require('../middleWares/isLoggedIn')
 
 router.get('/', catchAsyncError(async (req, res) => {
   const { status } = req.query
@@ -36,6 +38,8 @@ router.get('/:bookingId', catchAsyncError(async (req, res) => {
   })
   res.json(booking)
 }))
+
+router.use(isLoggedIn , isAdmin)
 
 router.patch("/:bookingId", catchAsyncError(async (req, res) => {
   const { bookingId } = req.params

@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken')
 
 const User = require('../models/users')
 const catchAsyncError = require('../middleWares/catchAsyncError')
+const isLoggedIn = require('../middleWares/isLoggedIn')
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -31,16 +32,8 @@ router.post('/login', catchAsyncError(async (req, res) => {
     res.json({ token })
 }))
 
-router.get('/getUser', catchAsyncError(async (req, res) => {
-    const token = req.cookies.token
-    if (!token) throw new Error("Unauthorized")
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const user = await User.findById(decoded.id)
-        res.json(user)
-    } catch (error) {
-        throw new Error("Login Session Expired")
-    }
+router.get('/getUser', isLoggedIn, catchAsyncError(async (req, res) => {
+    res.json(req.user)
 }))
 
 module.exports = router
