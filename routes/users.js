@@ -13,10 +13,10 @@ const signToken = id => {
 
 router.post('/signup', catchAsyncError(async (req, res) => {
     const { email, password } = req.body
-    const newUser = new User({ name: "very good", email, password })
+    const newUser = new User({ name: "test", email, password })
     await newUser.save()
     const token = signToken(newUser._id)
-    res.json({ token  , email : newUser.email , password : newUser.password})
+    res.json({ token })
 }))
 
 router.post('/login', catchAsyncError(async (req, res) => {
@@ -28,7 +28,19 @@ router.post('/login', catchAsyncError(async (req, res) => {
         throw new Error("Incorrect Email or Password")
     }
     const token = signToken(user._id)
-    res.json({token , email : user.email , password : user.password})
+    res.json({ token })
+}))
+
+router.get('/getUser', catchAsyncError(async (req, res) => {
+    const token = req.headers.authorization
+    if (!token) throw new Error("Unauthorized")
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const user = await User.findById(decoded.id)
+        res.json(user)
+    } catch (error) {
+        throw new Error("Login Session Expired")
+    }
 }))
 
 module.exports = router
