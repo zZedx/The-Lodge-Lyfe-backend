@@ -16,19 +16,19 @@ router.post('/signup', catchAsyncError(async (req, res) => {
     const newUser = new User({ name: "very good", email, password })
     await newUser.save()
     const token = signToken(newUser._id)
-    res.json({ token })
+    res.json({ token  , email : newUser.email , password : newUser.password})
 }))
 
 router.post('/login', catchAsyncError(async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) throw new Error("Pleas provide email and password")
+    if (!email || !password) throw new Error("Please provide email and password")
     const user = await User.findOne({ email })
 
     if (!user || !await user.correctPassword(password, user.password)) {
-        throw new Error("Incorrect Email or Password", 401)
+        throw new Error("Incorrect Email or Password")
     }
     const token = signToken(user._id)
-    res.json({token})
+    res.json({token , email : user.email , password : user.password})
 }))
 
 module.exports = router
