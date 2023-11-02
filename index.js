@@ -7,6 +7,7 @@ const cors = require("cors");
 const cabinRoutes = require("./routes/cabins")
 const settingsRoutes = require("./routes/settings")
 const bookingsRoutes = require("./routes/bookings")
+const usersRoutes = require("./routes/users");
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/WildOasis")
@@ -23,11 +24,12 @@ app.use(cors());
 app.use("/cabins" , cabinRoutes)
 app.use('/settings' , settingsRoutes)
 app.use('/bookings' , bookingsRoutes)
+app.use('/users' , usersRoutes)
 
 app.use((err, req, res, next) => {
-    const { status = 500 } = err
+    const { status = 500} = err
     if (!err.message) err.message = "Oh No, Something Went Wrong!"
-    res.status(status).json({err})
+    res.status(status).json({err , message : err.message})
 })
 
 app.listen(3000, () => {
