@@ -7,11 +7,15 @@ const {cloudinary} = require('../cloudinary')
 
 const catchAsyncError = require('../middleWares/catchAsyncError')
 const Cabin = require("../models/cabins");
+const isAdmin = require('../middleWares/isAdmin')
+const isLoggedIn = require('../middleWares/isLoggedIn')
 
 router.get("/", catchAsyncError(async (req, res) => {
   const allCabins = await Cabin.find();
   res.json(allCabins);
 }));
+
+router.use(isLoggedIn , isAdmin)
 
 router.post("/create", upload.single("image"), catchAsyncError(async (req, res) => {
   const { name, maxCapacity, discount, description, regularPrice } = req.body;
