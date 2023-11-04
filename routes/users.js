@@ -12,12 +12,20 @@ const signToken = id => {
     })
 }
 
-router.post('/signup', catchAsyncError(async (req, res) => {
-    const { email, password } = req.body
-    const newUser = new User({ name: "test", email, password })
-    await newUser.save()
-    const token = signToken(newUser._id)
-    res.json({ token })
+router.post('/register', catchAsyncError(async (req, res) => {
+    try {
+        const { email, password , name} = req.body
+        const newUser = new User({ name , email, password })
+        await newUser.save()
+        const token = signToken(newUser._id)
+        res.json({ token })
+    }
+    catch (e) {
+        if (e.code === 11000) {
+            throw new Error("Email already exists")
+        }
+        throw new Error(e.message)
+    }
 }))
 
 router.post('/login', catchAsyncError(async (req, res) => {
