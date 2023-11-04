@@ -40,6 +40,18 @@ router.post('/login', catchAsyncError(async (req, res) => {
     res.json({ token })
 }))
 
+router.get('/allUsers', catchAsyncError(async (req, res) => {
+    const role = req.query.users
+    if (role === 'all') {
+        const users = await User.find({})
+        res.json(users)
+    }
+    else {
+        const users = await User.find({ isAdmin : role === 'isAdmin' })
+        res.json(users)
+    }
+}))
+
 router.get('/getUser', isLoggedIn, catchAsyncError(async (req, res) => {
     res.json(req.user)
 }))
