@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/users')
 const catchAsyncError = require('../middleWares/catchAsyncError')
 const isLoggedIn = require('../middleWares/isLoggedIn')
+const isAdmin = require('../middleWares/isAdmin')
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -14,8 +15,8 @@ const signToken = id => {
 
 router.post('/register', catchAsyncError(async (req, res) => {
     try {
-        const { email, password , name} = req.body
-        const newUser = new User({ name , email, password })
+        const { email, password, name } = req.body
+        const newUser = new User({ name, email, password })
         await newUser.save()
         const token = signToken(newUser._id)
         res.json({ token })
@@ -47,13 +48,29 @@ router.get('/allUsers', catchAsyncError(async (req, res) => {
         res.json(users)
     }
     else {
-        const users = await User.find({ isAdmin : role === 'isAdmin' })
+        const users = await User.find({ isAdmin: role === 'isAdmin' })
         res.json(users)
     }
 }))
 
 router.get('/getUser', isLoggedIn, catchAsyncError(async (req, res) => {
     res.json(req.user)
+}))
+
+router.use(isLoggedIn, isAdmin)
+
+router.delete('/deleteUser/:id', catchAsyncError(async (req, res) => {
+    const { id } = req.params
+    const user = await User.findByIdAndDelete(id)
+    if (!user) throw new Error("User not found")
+    res.json()
+}))
+
+router.patch('/updateRole/:id', catchAsyncError(async (req, res) => {
+    const { id } = req.params
+    const { isAdmin } = req.body
+    await User.findByIdAndUpdate(id, { isAdmin })
+    res.json()
 }))
 
 module.exports = router
