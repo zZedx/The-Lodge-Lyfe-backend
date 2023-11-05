@@ -2,10 +2,16 @@ const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
 
+const multer = require("multer");
+const { storage } = require("../cloudinary");
+const upload = multer({ storage });
+const { cloudinary } = require('../cloudinary')
+
 const User = require('../models/users')
 const catchAsyncError = require('../middleWares/catchAsyncError')
 const isLoggedIn = require('../middleWares/isLoggedIn')
 const isAdmin = require('../middleWares/isAdmin')
+
 
 const signToken = id => {
     return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -57,12 +63,38 @@ router.get('/getUser', isLoggedIn, catchAsyncError(async (req, res) => {
     res.json(req.user)
 }))
 
+router.patch('/updateUser', isLoggedIn, upload.single("profilePic"), catchAsyncError(async (req, res) => {
+    const { name, oldPassword, password, imageName } = req.body;
+    const updateData = { name };
+
+    const user = await User.findById(req.user._id);
+    if (oldPassword && !await user.correctPassword(oldPassword, user.password)) {
+        throw new Error("The password did not match our records");
+    }
+    else if (password){
+        updateData.password = password;
+    }
+    if (req.file) {
+        if (user.imageName !== 'default_pfp') {
+            await cloudinary.uploader.destroy(user.imageName);
+        }
+        updateData.profilePic = req.file.path;
+        updateData.imageName = req.file.filename;
+    }
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, updateData , {new: true});
+    res.json(updatedUser);
+}))
+
 router.use(isLoggedIn, isAdmin)
 
 router.delete('/deleteUser/:id', catchAsyncError(async (req, res) => {
     const { id } = req.params
-    const user = await User.findByIdAndDelete(id)
+    const user = await User.findById(id)
     if (!user) throw new Error("User not found")
+    if (user.imageName !== 'default_pfp') {
+        await cloudinary.uploader.destroy(user.imageName);
+    }
+    await User.findByIdAndDelete(id)
     res.json()
 }))
 
