@@ -30,6 +30,30 @@ router.get('/', catchAsyncError(async (req, res) => {
   }
 }))
 
+router.get('/bookingsAfterDate', catchAsyncError(async (req, res) => {
+  const { date } = req.query
+  const bookingsAfterDate = await Booking.find({
+    created_at: { $gte: date, $lte: new Date().toISOString() }
+  })
+    .populate("guest").populate({
+      path: 'cabin',
+      select: 'name'
+    })
+  res.json(bookingsAfterDate)
+}))
+
+router.get('/staysAfterDate', catchAsyncError(async (req, res) => {
+  const { date } = req.query
+  const staysAfterDate = await Booking.find({
+    startDate: { $gte: date, $lte: new Date().toISOString() }
+  })
+    .populate("guest").populate({
+      path: 'cabin',
+      select: 'name'
+    })
+  res.json(staysAfterDate)
+}))
+
 router.get('/:bookingId', catchAsyncError(async (req, res) => {
   const { bookingId } = req.params
   const booking = await Booking.findById(bookingId).populate("guest").populate({
@@ -39,7 +63,7 @@ router.get('/:bookingId', catchAsyncError(async (req, res) => {
   res.json(booking)
 }))
 
-router.use(isLoggedIn , isAdmin)
+router.use(isLoggedIn, isAdmin)
 
 router.patch("/:bookingId", catchAsyncError(async (req, res) => {
   const { bookingId } = req.params
