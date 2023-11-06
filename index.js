@@ -10,8 +10,10 @@ const settingsRoutes = require("./routes/settings")
 const bookingsRoutes = require("./routes/bookings")
 const usersRoutes = require("./routes/users");
 
+const PORT = process.env.PORT || 3000;
+
 mongoose
-  .connect("mongodb://127.0.0.1:27017/WildOasis")
+  .connect(process.env.DB_URL)
   .then(() => {
     console.log("Mongoose Running");
   })
@@ -21,7 +23,7 @@ mongoose
 
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend's URL
+  origin: process.env.FRONTEND_URL, // Replace with frontend's URL
   credentials: true,
 }));
 app.use(cookieParser());
@@ -41,6 +43,6 @@ app.use((err, req, res, next) => {
   res.status(status).json({ err, message: err.message })
 })
 
-app.listen(3000, () => {
+app.listen(PORT, () => {
   console.log("Listening");
 });
