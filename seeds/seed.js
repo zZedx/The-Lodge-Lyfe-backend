@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const mongoose = require("mongoose");
 const { isPast, isFuture, isToday , differenceInDays , parseISO} = require("date-fns");
 
@@ -12,7 +14,7 @@ const guests = require("./data/guests");
 const bookings = require("./data/bookings");
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/WildOasis")
+  .connect(process.env.DB_URL)
   .then(() => {
     console.log("Mongoose Running");
   })
@@ -24,30 +26,22 @@ const subtractDates = (dateStr1, dateStr2) =>
   differenceInDays(parseISO(String(dateStr1)), parseISO(String(dateStr2)))
 
 const seedDB = async () => {
-  // await Guest.deleteMany({});
-  // await Cabin.deleteMany({});
-  // await Setting.deleteMany({});
-  // await User.deleteMany({});
+  await Guest.deleteMany({});
+  await Cabin.deleteMany({});
+  await Setting.deleteMany({});
+  await User.deleteMany({});
   await Booking.deleteMany({});
 
-  // await Cabin.insertMany(cabins);
-  // await Guest.insertMany(guests);
+  await Cabin.insertMany(cabins);
+  await Guest.insertMany(guests);
 
-  // const settings = new Setting({
-  //   minBookingLength: 1,
-  //   maxBookingLength: 14,
-  //   maxGuestsPerBooking: 10,
-  //   breakfastPrice: 15,
-  // });
-  // await settings.save();
-
-  // const user = new User({
-  //   name: "admin",
-  //   email: "Kartikajmera890@gmail.com",
-  //   password: "admin",
-  //   isAdmin: true,
-  // });
-  // await user.save()
+  const settings = new Setting({
+    minBookingLength: 1,
+    maxBookingLength: 14,
+    maxGuestsPerBooking: 10,
+    breakfastPrice: 15,
+  });
+  await settings.save();
 
   bookings.forEach(async (booking) => {
     const guest = (await Guest.aggregate([{ $sample: { size: 1 } }]))[0];
