@@ -4,6 +4,7 @@ const User = require('../models/users');
 
 const isLoggedIn = catchAsyncError(async (req, res, next) => {
     const token = req.cookies.token;
+    console.log(req.cookies)
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
