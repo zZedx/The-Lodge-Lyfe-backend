@@ -4,7 +4,6 @@ const User = require('../models/users');
 
 const isLoggedIn = catchAsyncError(async (req, res, next) => {
     const token = req.cookies.token;
-    console.log(req.cookies)
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -17,7 +16,6 @@ const isLoggedIn = catchAsyncError(async (req, res, next) => {
                 throw new Error('Not authorized, user not found');
             }
         } catch (error) {
-            console.error(error);
             res.status(401);
             throw new Error('Not authorized, token failed');
         }
