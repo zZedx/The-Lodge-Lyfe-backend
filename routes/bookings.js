@@ -54,6 +54,14 @@ router.get('/staysAfterDate', catchAsyncError(async (req, res) => {
   res.json(staysAfterDate)
 }))
 
+router.get('/staysTodayActivity' , catchAsyncError(async (req , res) => {
+  const today = new Date().toISOString().split("T")[0]
+  const staysToday = await Booking.find({
+    startDate : today
+  }).populate('guest')
+  res.json(staysToday)
+}))
+
 router.get('/:bookingId', catchAsyncError(async (req, res) => {
   const { bookingId } = req.params
   const booking = await Booking.findById(bookingId).populate("guest").populate({
