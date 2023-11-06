@@ -24,30 +24,30 @@ const subtractDates = (dateStr1, dateStr2) =>
   differenceInDays(parseISO(String(dateStr1)), parseISO(String(dateStr2)))
 
 const seedDB = async () => {
-  await Guest.deleteMany({});
-  await Cabin.deleteMany({});
-  await Setting.deleteMany({});
+  // await Guest.deleteMany({});
+  // await Cabin.deleteMany({});
+  // await Setting.deleteMany({});
+  // await User.deleteMany({});
   await Booking.deleteMany({});
-  await User.deleteMany({});
 
-  await Cabin.insertMany(cabins);
-  await Guest.insertMany(guests);
+  // await Cabin.insertMany(cabins);
+  // await Guest.insertMany(guests);
 
-  const settings = new Setting({
-    minBookingLength: 1,
-    maxBookingLength: 14,
-    maxGuestsPerBooking: 10,
-    breakfastPrice: 15,
-  });
-  await settings.save();
+  // const settings = new Setting({
+  //   minBookingLength: 1,
+  //   maxBookingLength: 14,
+  //   maxGuestsPerBooking: 10,
+  //   breakfastPrice: 15,
+  // });
+  // await settings.save();
 
-  const user = new User({
-    name: "admin",
-    email: "Kartikajmera890@gmail.com",
-    password: "admin",
-    isAdmin: true,
-  });
-  await user.save()
+  // const user = new User({
+  //   name: "admin",
+  //   email: "Kartikajmera890@gmail.com",
+  //   password: "admin",
+  //   isAdmin: true,
+  // });
+  // await user.save()
 
   bookings.forEach(async (booking) => {
     const guest = (await Guest.aggregate([{ $sample: { size: 1 } }]))[0];

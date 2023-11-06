@@ -55,10 +55,13 @@ router.get('/staysAfterDate', catchAsyncError(async (req, res) => {
 }))
 
 router.get('/staysTodayActivity' , catchAsyncError(async (req , res) => {
-  const today = new Date().toISOString().split("T")[0]
+  const today = new Date();
+  const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
   const staysToday = await Booking.find({
-    startDate : today
-  }).populate('guest')
+    startDate: { $gte: startOfDay, $lte: endOfDay }
+  }).populate('guest');
   res.json(staysToday)
 }))
 
