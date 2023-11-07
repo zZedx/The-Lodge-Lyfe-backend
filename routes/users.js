@@ -63,7 +63,14 @@ router.get('/getUser', isLoggedIn, catchAsyncError(async (req, res) => {
     res.json(req.user)
 }))
 
-router.patch('/updateUser', isLoggedIn, upload.single("profilePic"), catchAsyncError(async (req, res) => {
+const isTestUser = (req, res, next) => {
+    if (req.user.email === 'test@gmail.com') {
+        throw new Error("You can't edit the test user. Please create your own account")
+    }
+    next()
+}
+
+router.patch('/updateUser', isLoggedIn,isTestUser, upload.single("profilePic"), catchAsyncError(async (req, res) => {
     const { name, oldPassword, password, imageName } = req.body;
     const updateData = { name };
 
