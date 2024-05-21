@@ -1,3 +1,5 @@
+const isProduction = process.env.NODE_ENV === "production";
+
 const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
@@ -19,13 +21,29 @@ const signToken = id => {
     })
 }
 
+const clearCookieAsync = async (res) => {
+    return new Promise((resolve, reject) => {
+      res.clearCookie("token", {
+        secure: isProduction,
+        sameSite: isProduction ? "None" : "Lax",
+      });
+      resolve();
+    });
+  };
+
 router.post('/register', catchAsyncError(async (req, res) => {
     try {
         const { email, password, name } = req.body
         const newUser = new User({ name, email, password })
         await newUser.save()
         const token = signToken(newUser._id)
-        res.json({ token })
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+            expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          });
+        res.json({ message: "Registered"})
     }
     catch (e) {
         if (e.code === 11000) {
@@ -44,7 +62,18 @@ router.post('/login', catchAsyncError(async (req, res) => {
         throw new Error("Incorrect Email or Password")
     }
     const token = signToken(user._id)
-    res.json({ token })
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "None" : "Lax",
+        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
+    res.json({ message: "Logged in"})
+}))
+
+router.post('/logout', catchAsyncError(async (req, res) => {
+    await clearCookieAsync(res);
+    res.json({ message: "Logged out" });
 }))
 
 router.get('/allUsers', catchAsyncError(async (req, res) => {
