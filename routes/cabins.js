@@ -15,6 +15,12 @@ router.get("/", catchAsyncError(async (req, res) => {
   res.json(allCabins);
 }));
 
+router.get("/:id", catchAsyncError(async (req, res) => {
+  const cabin = await Cabin.findById(req.params.id);
+  if(!cabin) throw new Error("Cabin not found")
+  res.json(cabin)
+}));
+
 router.use(isLoggedIn , isAdmin)
 
 router.post("/create", upload.single("image"), catchAsyncError(async (req, res) => {
