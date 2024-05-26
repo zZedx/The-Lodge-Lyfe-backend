@@ -8,7 +8,8 @@ const {cloudinary} = require('../cloudinary')
 const catchAsyncError = require('../middleWares/catchAsyncError')
 const Cabin = require("../models/cabins");
 const isAdmin = require('../middleWares/isAdmin')
-const isLoggedIn = require('../middleWares/isLoggedIn')
+const isLoggedIn = require('../middleWares/isLoggedIn');
+const Booking = require('../models/bookings');
 
 router.get("/", catchAsyncError(async (req, res) => {
   const allCabins = await Cabin.find();
@@ -19,6 +20,18 @@ router.get("/:id", catchAsyncError(async (req, res) => {
   const cabin = await Cabin.findById(req.params.id);
   if(!cabin) throw new Error("Cabin not found")
   res.json(cabin)
+}));
+
+router.get("/:id/bookedDates", catchAsyncError(async (req, res) => {
+  const { id } = req.params
+  const bookings = await Booking.find({ cabin: id })
+  const bookedDates = bookings.map(booking => {
+    return {
+      startDate: booking.startDate,
+      endDate: booking.endDate
+    }
+  })
+  res.json(bookedDates)
 }));
 
 router.use(isLoggedIn , isAdmin)
